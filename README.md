@@ -1,1 +1,5 @@
 chrome-edge_title_displayer
+針對youtube做的。主要功能為顯示Youtube影片標題。
+支援Edge及Chrome瀏覽器。
+要觸發必須開啟Youtube分頁才能啟動顯示功能，
+顯示功能啟動後則可顯示任意網頁的標題。
