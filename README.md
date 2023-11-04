@@ -1,0 +1,1 @@
+chrome-edge_title_displayer
