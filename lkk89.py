@@ -1,270 +1,168 @@
+import typing
+from PyQt5.QtCore import QObject
+from PyQt5.QtWidgets import QWidget
 import win32gui
 from time import sleep
 from PyQt5 import QtCore, QtGui, QtWidgets
 import pygetwindow as gw
-mutex=QtCore.QMutex()
-waiting=QtCore.QWaitCondition()
-detect_text="YouTube標題"
+import UI
+from detectelement import element as detectelement
+
 import icon
-WIDTH=482
-HEIGHT=45
-# --------------UI--------------- #
-class Ui_detecting(object):
-    def setupUi(self, Detecting_Client:QtWidgets.QWidget):
-        Detecting_Client.setObjectName("Detecting_Client")
-        Detecting_Client.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(Detecting_Client.sizePolicy().hasHeightForWidth())
-        Detecting_Client.setSizePolicy(sizePolicy)
-        Detecting_Client.setMinimumSize(QtCore.QSize(200, 90))
-        Detecting_Client.setMaximumSize(QtCore.QSize(200, 90))
-        self.text = QtWidgets.QLabel(Detecting_Client)
-        self.text.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
-        self.text.setGeometry(QtCore.QRect(10, 25, 180, 40))
-        font = QtGui.QFont()
-        font.setFamily("AdLib WGL4 BT")
-        font.setPointSize(15)
-        self.text.setFont(font)
-        self.text.setObjectName("text")
-        Detecting_Client.setWindowFlags(QtCore.Qt.WindowType.WindowCloseButtonHint)
-
-        self.retranslateUi(Detecting_Client)
-        QtCore.QMetaObject.connectSlotsByName(Detecting_Client)
-
-    def retranslateUi(self, Detecting_Client:QtWidgets.QWidget):
-        _translate = QtCore.QCoreApplication.translate
-        Detecting_Client.setWindowTitle(_translate("dectecting", "Youtube Title Displayer"))
-        self.text.setText(_translate("Detecting_Client", "偵測{}中...").format(detect_text))
-
-class Ui_MainWindow(object):
-    def setupUi(self, music_display:QtWidgets.QWidget):
-        music_display.setObjectName("music_display")
-        music_display.resize(WIDTH, HEIGHT)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(music_display.sizePolicy().hasHeightForWidth())
-        music_display.setSizePolicy(sizePolicy)
-        music_display.setMinimumSize(QtCore.QSize(WIDTH, HEIGHT))
-        music_display.setMaximumSize(QtCore.QSize(WIDTH, HEIGHT))
-        if True:
-            palette = QtGui.QPalette()
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.WindowText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Button, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Light, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Midlight, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Dark, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Mid, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Text, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.BrightText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ButtonText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Base, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Window, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.Shadow, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.AlternateBase, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ToolTipBase, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Active, QtGui.QPalette.ToolTipText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.WindowText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Button, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Light, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Midlight, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Dark, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Mid, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Text, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.BrightText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ButtonText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Base, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Window, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.Shadow, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.AlternateBase, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ToolTipBase, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Inactive, QtGui.QPalette.ToolTipText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.WindowText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Button, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Light, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Midlight, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Dark, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Mid, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Text, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 255))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.BrightText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ButtonText, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Base, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Window, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.Shadow, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.AlternateBase, brush)
-            brush = QtGui.QBrush(QtGui.QColor(255, 255, 220))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipBase, brush)
-            brush = QtGui.QBrush(QtGui.QColor(0, 0, 0))
-            brush.setStyle(QtCore.Qt.SolidPattern)
-            palette.setBrush(QtGui.QPalette.Disabled, QtGui.QPalette.ToolTipText, brush)
-            music_display.setPalette(palette)
-        music_display.setAcceptDrops(False)
-        self.music_name = QtWidgets.QLabel(music_display)
-        self.music_name.setGeometry(QtCore.QRect(0, 0, 481, 41))
-        self.font = QtGui.QFont()
-        self.font.setFamily("微軟正黑體")
-        self.font.setPointSize(16)
-        self.font.setBold(True)
-        self.font.setWeight(75)
-        self.qfmetrics=QtGui.QFontMetrics(self.font)
-        self.music_name.setFont(self.font)
-        self.music_name.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignLeft|QtCore.Qt.AlignVCenter)
-        self.music_name.setObjectName("music_name")
-        music_display.setWindowFlags(QtCore.Qt.WindowType.WindowCloseButtonHint)
-
-        self.retranslateUi(music_display)
-        QtCore.QMetaObject.connectSlotsByName(music_display)
-        # shell.SendKeys('%')
-
-    def retranslateUi(self, music_display):
-        _translate = QtCore.QCoreApplication.translate
-        music_display.setWindowTitle(_translate("music_display", "Youtube Title Displayer"))
-        self.music_name.setText(_translate("music_display", ""))
-    
-        
-
-
-# --------------UI--------------- #
 
 # --------------Controller--------------- #
 # shell = win32com.client.Dispatch("WScript.Shell")
-class detecting_controller(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__() # in python3, super(Class, self).xxx = super().xxx
-        self.ui = Ui_detecting()
-        self.ui.setupUi(self)
-        self.setup_control()
-    
-    def setup_control(self):
-        self.setWindowIcon(i)
-        global yt
-        self.qdecting=detecting()
-        self.qdecting.qisgnal.connect(self.decting)
-        self.qdecting.start()
+# ------------Main Controller------------ #
+class MainWindow_controller(QtWidgets.QStackedWidget):
+    def __init__(self,icon:QtGui.QIcon) -> None:
+        super().__init__()
+        self.setupUI(icon)
+        self.switch_to_selecting()
 
-    def decting(self):
-        self.close()
-        self.w = MainWindow_controller()
-        self.w.showMinimized()
-        self.w.show()
-        self.w.showMaximized()
-        self.w.showNormal()
-        qr = self.w.frameGeometry()
+    def setupUI(self,icon:QtGui.QIcon):
+        self.setWindowFlags(QtCore.Qt.WindowType.WindowCloseButtonHint)
+        self.setWindowTitle("Youtube Title Displayer")
+        self.setWindowIcon(icon)
+
+    def switch_to_selecting(self):
+        self.selecting=selecting_controller(self)
+        self.selecting_button_init()
+        index=self.addWidget(self.selecting)
+        self.setCurrentIndex(index)
+    
+    def selecting_button_init(self):
+        '''
+        initial the button and element.
+        Note that the first element.windowtitle will be the cutoff point for the title to display.
+        '''
+        for i in self.datainit():
+            self.addbutton(i)
+
+    def datainit(self) -> list[detectelement]:
+        _result=[]
+        i=detectelement("Youtube"," - YouTube"," - Microsoft​ Edge")
+        _result.append(i)
+        i=detectelement("VLC"," - VLC")
+        _result.append(i)
+        return _result
+
+    def addbutton(self,element:detectelement):
+        button=self.selecting.addbutton(element.text)
+        button.clicked.connect(lambda state,element=element:self.switch_to_detecting(element))
+
+    def switch_to_detecting(self,element:detectelement):
+        self.dectecting=detecting_controller(self,element,lambda hwnd,filters=element.windowtitle:self.display(hwnd,filters))
+        index=self.addWidget(self.dectecting)
+        self.setCurrentIndex(index)
+
+    def display(self,hwnd,filters:tuple[str]):
+        self.displaying = DisplayWindow_controller(self,hwnd,filters)
+        index=self.addWidget(self.displaying)
+        self.setCurrentIndex(index)
+        self.showMinimized()
+        self.show()
+        self.showMaximized()
+        self.showNormal()
+        qr = self.frameGeometry()
         cp = QtWidgets.QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
-        self.w.move(qr.topLeft())
-        
+        self.move(qr.topLeft())
 
-class MainWindow_controller(QtWidgets.QMainWindow):
-    def __init__(self):
-        super().__init__() # in python3, super(Class, self).xxx = super().xxx
-        self.ui = Ui_MainWindow()
+# ----------Selecting Controller--------- #
+class selecting_controller(QtWidgets.QWidget):
+    def __init__(self,MainWindow) -> None:
+        super().__init__(MainWindow)
+        self.ui = UI.Ui_Selecting_Client()
         self.ui.setupUi(self)
-        self.setup_control()
+        self.ui.MainWindowsetup(MainWindow)
 
-    def setup_control(self):
+    def addbutton(self,text:str):
+        return self.ui.addbutton(text)
+
+# ----------Detecting Controller--------- #
+class detecting_controller(QtWidgets.QWidget):
+    detectingsignal=QtCore.pyqtSignal(int)
+    def __init__(self,MainWindow,element:detectelement,func):
+        '''
+        func : the fuction that detectingsignal connect.
+        detectingsignal will emit a hwnd.
+        '''
+        super().__init__(MainWindow) # in python3, super(Class, self).xxx = super().xxx
+        self.ui = UI.Ui_Detecting()
+        self.ui.setupUi(self,element.text)
+        self.ui.MainWindowsetup(MainWindow)
+        self.setup_control(element,func)
+    
+    def setup_control(self,element:detectelement,func):
+        self.setWindowIcon(i)
+        self.detectingsignal.connect(func)
+        self.element=element
+        self.qdecting=self.detecting(self,element=self.element)
+        self.qdecting.qisgnal.connect(lambda signal:self.detectingsignal.emit(signal))
+        self.qdecting.start()
+    
+    class detecting(QtCore.QThread):
+        qisgnal=QtCore.pyqtSignal(int)
+        def __init__(self, parent: QObject | None = ...,element:detectelement = ...) -> None:
+            super().__init__(parent)
+            self.element=element
+        def run(self):
+            yt=0
+            for i in gw.getAllTitles():
+                flag=True
+                for j in self.element.windowtitle:
+                    if j in i:
+                        continue
+                    else:
+                        flag=False
+                        break
+                if not flag:
+                    continue
+                yt = win32gui.FindWindowEx(None,None,None, i)
+                break
+            sleep(1)
+            while (yt == 0):
+                sleep(1)
+                for i in gw.getAllTitles():
+                    flag=True
+                    for j in self.element.windowtitle:
+                        if j in i:
+                            continue
+                        else:
+                            flag=False
+                            break
+                    if not flag:
+                        continue
+                    yt = win32gui.FindWindowEx(None,None,None, i)
+                    break
+            self.qisgnal.emit(yt)
+
+# ---------DisplayWindow Controller--------- #
+class DisplayWindow_controller(QtWidgets.QWidget):
+    def __init__(self,MainWindow,hwnd,filters):
+        super().__init__(MainWindow) # in python3, super(Class, self).xxx = super().xxx
+        self.ui = UI.Ui_display_music_name()
+        self.ui.setupUi(self)
+        self.ui.MainWindowsetup(MainWindow)
+        self.setup_control(hwnd,filters)
+
+    def setup_control(self,hwnd,filters):
+        self.mutex=QtCore.QMutex()
+        self.waiting=QtCore.QWaitCondition()
         self.dplength=20
         self.setWindowIcon(i)
-        self.string = win32gui.GetWindowText(yt)
+        self.filters=filters
+        self.string = win32gui.GetWindowText(hwnd)
         self.qt_movefunction = QtCore.QThread()
         self.qt_movefunction.run = self.movefunction
         self.qt_movefunction.start()
-        self.checkfuntion = checkfunction()
-        self.checkfuntion.qsignal.connect(self.changestr)
+        self.checkfuntion = self.checkfunction(self,yt=hwnd)
+        self.checkfuntion.checkqsignal.connect(self.changestr)
         self.checkfuntion.start()
 
     def changestr(self,value):
         self.movestartstate = False
-        self.string = title_process(value)
+        self.string = self.title_process(value)
         self.qt_movefunction.quit()
         self.qt_movefunction.wait()
         while(self.qt_movefunction.isRunning()):
@@ -272,20 +170,21 @@ class MainWindow_controller(QtWidgets.QMainWindow):
         self.qt_movefunction = QtCore.QThread()
         self.qt_movefunction.run = self.movefunction
         self.qt_movefunction.start()
-        waiting.wakeAll()
+        sleep(0.3)
+        self.waiting.wakeAll()
 
     def movefunction(self):
-        self.string=title_process(self.string)
+        self.string=self.title_process(self.string)
         self.ui.music_name.setText(self.string)
         self.movestartstate = True
         self.dpiwidth=self.dpi_pos(self.string)
-        if (self.dpiwidth < WIDTH):
+        if (self.dpiwidth < UI.UI_DISPLAY_WIDTH):
             self.movestartstate = False
-            self.ui.music_name.setGeometry(0,0,self.dpiwidth,HEIGHT)
+            self.ui.music_name.setGeometry(0,0,self.dpiwidth,UI.UI_DISPLAY_HEIGHT)
         while(self.movestartstate):
-            self.ui.music_name.setGeometry(0,0,self.dpiwidth,HEIGHT)
+            self.ui.music_name.setGeometry(0,0,self.dpiwidth,UI.UI_DISPLAY_HEIGHT)
             sleep(1)
-            for i in range(self.dpiwidth-WIDTH):
+            for i in range(self.dpiwidth-UI.UI_DISPLAY_WIDTH):
                 if not (self.movestartstate):
                     break
                 sleep(0.03)
@@ -298,50 +197,33 @@ class MainWindow_controller(QtWidgets.QMainWindow):
     
     def dpi_pos(self,text:str):
         return self.ui.qfmetrics.width(text)
-
-
+    
+    def title_process(self,title:str):
+        titlepos=title.find(self.filters[0])
+        if titlepos != -1:
+            title=title[:titlepos]
+        return title
+    
+    class checkfunction(QtCore.QThread):
+        checkqsignal = QtCore.pyqtSignal(str)
+        def __init__(self, parent: QObject | None = ... , yt:int = ...) -> None:
+            super().__init__(parent)
+            self.mutex=parent.mutex
+            self.waiting=parent.waiting
+            self.yt=yt
+            self.checkstartstate = True
+        def run(self):
+            yt_title = win32gui.GetWindowText(self.yt)
+            while(self.checkstartstate):
+                yt_title_new = win32gui.GetWindowText(self.yt)
+                if (yt_title_new != yt_title):
+                    self.mutex.lock()
+                    yt_title=yt_title_new
+                    self.checkqsignal.emit(yt_title)
+                    self.waiting.wait(self.mutex)
+                    self.mutex.unlock()
 
 # --------------Controller--------------- #
-# --------------QThread--------------- #
-def title_process(title:str):
-    titlepos=title.find(" - YouTube")
-    if titlepos != -1:
-        title=title[:titlepos]
-    return title
-
-class detecting(QtCore.QThread):
-    qisgnal=QtCore.pyqtSignal(int)
-    def run(self):
-        global yt
-        yt=0
-        for i in gw.getAllTitles():
-            if ' - Microsoft​ Edge' in i:
-                if ' - YouTube' in i:
-                    yt = win32gui.FindWindowEx(None,None,None, i)
-        sleep(1)
-        while (yt == 0):
-            sleep(1)
-            for i in gw.getAllTitles():
-                if ' - Microsoft​ Edge' in i:
-                    if ' - YouTube' in i:
-                        yt = win32gui.FindWindowEx(None,None,None, i)
-        self.qisgnal.emit(yt)
-
-class checkfunction(QtCore.QThread):
-    qsignal = QtCore.pyqtSignal(str)
-    checkstartstate = True
-    def run(self):
-        yt_title = win32gui.GetWindowText(yt)
-        while(self.checkstartstate):
-            yt_title_new = win32gui.GetWindowText(yt)
-            if (yt_title_new != yt_title):
-                mutex.lock()
-                yt_title=yt_title_new
-                self.qsignal.emit(yt_title)
-                waiting.wait(mutex)
-                mutex.unlock()
-
-# --------------QThread--------------- #
 
 # --------------Start--------------- #
 
@@ -352,7 +234,7 @@ if __name__ == '__main__':
     pm.loadFromData(icon.b64decode(icon.img))
     i = QtGui.QIcon()
     i.addPixmap(pm)
-    window = detecting_controller()
+    window = MainWindow_controller(i)
     window.show()
     sys.exit(app.exec_())
     
