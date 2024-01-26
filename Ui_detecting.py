@@ -13,17 +13,21 @@ WIDTH=250
 HEIGHT=90
 
 class Ui_Detecting(object):
-    def setupUi(self, Detecting_Client:QtWidgets.QMainWindow,detect_text:str):
-        Detecting_Client.setObjectName("Detecting_Client")
-        Detecting_Client.setEnabled(True)
+    def __setupUI(self,Widget:QtWidgets.QWidget):
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(Detecting_Client.sizePolicy().hasHeightForWidth())
-        Detecting_Client.setSizePolicy(sizePolicy)
-        Detecting_Client.setMinimumSize(QtCore.QSize(WIDTH, HEIGHT))
-        Detecting_Client.setMaximumSize(QtCore.QSize(WIDTH, HEIGHT))
-        Detecting_Client.setAcceptDrops(False)
+        sizePolicy.setHeightForWidth(Widget.sizePolicy().hasHeightForWidth())
+        Widget.setEnabled(True)
+        Widget.setSizePolicy(sizePolicy)
+        Widget.setMinimumSize(QtCore.QSize(WIDTH, HEIGHT))
+        Widget.setMaximumSize(QtCore.QSize(WIDTH, HEIGHT))
+        Widget.setAcceptDrops(False)
+
+    def setupUi(self, Detecting_Client:QtWidgets.QWidget,detect_text:str):
+        Detecting_Client.setObjectName("Detecting_Client")
+        self.__setupUI(Detecting_Client)
+        self.__setupUI(Detecting_Client.parent())
         self.text = QtWidgets.QLabel(Detecting_Client)
         self.text.setGeometry(QtCore.QRect(10, 25, 220, 40))
         self.text.setAlignment(QtCore.Qt.AlignLeading|QtCore.Qt.AlignHCenter|QtCore.Qt.AlignTop)
@@ -32,21 +36,8 @@ class Ui_Detecting(object):
         font.setPointSize(12)
         self.text.setFont(font)
         self.text.setObjectName("text")
-        
-
         self.retranslateUi(Detecting_Client,detect_text)
         QtCore.QMetaObject.connectSlotsByName(Detecting_Client)
-    
-    def MainWindowsetup(self,MainWindow:QtWidgets.QStackedWidget):
-        MainWindow.setEnabled(True)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
-        MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMinimumSize(QtCore.QSize(WIDTH, HEIGHT))
-        MainWindow.setMaximumSize(QtCore.QSize(WIDTH, HEIGHT))
-        MainWindow.setAcceptDrops(False)
 
     def retranslateUi(self, Detecting_Client:QtWidgets.QWidget,detect_text:str):
         _translate = QtCore.QCoreApplication.translate
