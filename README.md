@@ -1,3 +1,9 @@
+Deprecated.
+===
+
+## 轉為C++專案了。因為以前寫的根本是一坨，<br>然後就是這版有奇怪的閃退BUG我找不出原因，乾脆重寫。
+
+
 Title displayer  
 可顯示任意視窗上的標題  
 針對 **VLC** 及 **edge的youtube分頁** 有做優化
